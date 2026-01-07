@@ -1,0 +1,39 @@
+package com.aleyna.userloginprofiles.controller;
+
+import com.aleyna.userloginprofiles.entity.User;
+import com.aleyna.userloginprofiles.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/admin/users") // BURASI DEĞİŞTİ
+@Tag(name = "KULLANICI YÖNETİMİ", description = "Sistem sahibi tarafından tüm kullanıcıların yönetimi")
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Operation(summary = "Tüm Kullanıcıları Listele", description = "Sistemdeki tüm kullanıcıları listeler")
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @Operation(summary = "Kullanıcı Sil", description = "Belirli bir kullanıcıyı sistemden siler")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        boolean deleted = userService.deleteUser(id);
+        if (deleted) {
+            return ResponseEntity.ok("Kullanıcı silindi");
+        } else {
+            return ResponseEntity.badRequest().body("Kullanıcı bulunamadı");
+        }
+    }
+}
